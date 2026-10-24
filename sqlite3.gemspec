@@ -83,7 +83,7 @@ Gem::Specification.new do |s|
   ]
   s.rdoc_options = ["--main", "README.md"]
 
-  s.add_dependency("mini_portile2", "~> 2.8.0")
+  # s.add_dependency("mini_portile2", "~> 2.8.0")
 
   s.extensions << "ext/sqlite3/extconf.rb"
 end

@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gemspec
-
+gem "mini_portile2", github: "you54f/mini_portile", ref: "d571794f3603a01fa70a860ebe3181e59908d3da"
 group :test do
   gem "minitest", "6.0.6"
 
