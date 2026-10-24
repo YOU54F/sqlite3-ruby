@@ -115,7 +115,7 @@ jobs:
     steps:
       - run: |
           dnf group install -y "C Development Tools and Libraries"
-          dnf install -y ruby ruby-devel patch
+          dnf install -y ruby ruby-devel patch git-all
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -135,7 +135,7 @@ jobs:
         with:
           usesh: true
           copyback: false
-          prepare: pkg install -y ruby devel/ruby-gems pkgconf
+          prepare: pkg install -y ruby devel/ruby-gems pkgconf git
           envs: BUNDLE_WITHOUT
           run: |
             gem install bundler
@@ -250,17 +250,17 @@ jobs:
         ruby: ${{ fromJSON(needs.ruby_versions.outputs.image_tag) }}
         include:
           # declare docker image for each platform
-          - { runner: ubuntu-latest, platform: aarch64-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base &&" }
-          - { runner: ubuntu-latest, platform: arm-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base &&" }
-          - { runner: ubuntu-latest, platform: x86-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base &&" }
-          - { runner: ubuntu-latest, platform: x86_64-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base &&" }
+          - { runner: ubuntu-latest, platform: aarch64-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base git &&" }
+          - { runner: ubuntu-latest, platform: arm-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base git &&" }
+          - { runner: ubuntu-latest, platform: x86-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base git &&" }
+          - { runner: ubuntu-latest, platform: x86_64-linux-musl, docker_tag: "-alpine", bootstrap: "apk add build-base git &&" }
           # declare docker platform for each platform
-          - { runner: ubuntu-24.04-arm, platform: aarch64-linux-gnu, docker_platform: "--platform=linux/arm64" }
-          - { runner: ubuntu-24.04-arm, platform: aarch64-linux-musl, docker_platform: "--platform=linux/arm64" }
-          - { runner: ubuntu-24.04-arm, platform: arm-linux-gnu, docker_platform: "--platform=linux/arm/v7" }
-          - { runner: ubuntu-24.04-arm, platform: arm-linux-musl, docker_platform: "--platform=linux/arm/v7" }
-          - { runner: ubuntu-latest, platform: x86-linux-gnu, docker_platform: "--platform=linux/386" }
-          - { runner: ubuntu-latest, platform: x86-linux-musl, docker_platform: "--platform=linux/386" }
+          - { runner: ubuntu-24.04-arm, platform: aarch64-linux-gnu, docker_platform: "--platform=linux/arm64", bootstrap: "apt-get update && apt-get install -y build-essential git &&" }
+          - { runner: ubuntu-24.04-arm, platform: aarch64-linux-musl, docker_platform: "--platform=linux/arm64", bootstrap: "apt-get update && apt-get install -y build-essential git &&" }
+          - { runner: ubuntu-24.04-arm, platform: arm-linux-gnu, docker_platform: "--platform=linux/arm/v7", bootstrap: "apt-get update && apt-get install -y build-essential git &&" }
+          - { runner: ubuntu-24.04-arm, platform: arm-linux-musl, docker_platform: "--platform=linux/arm/v7", bootstrap: "apt-get update && apt-get install -y build-essential git &&" }
+          - { runner: ubuntu-latest, platform: x86-linux-gnu, docker_platform: "--platform=linux/386", bootstrap: "apt-get update && apt-get install -y build-essential git &&" }
+          - { runner: ubuntu-latest, platform: x86-linux-musl, docker_platform: "--platform=linux/386", bootstrap: "apt-get update && apt-get install -y build-essential git &&" }
     runs-on: ${{ matrix.runner || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -295,6 +295,9 @@ jobs:
             platform: arm64-darwin
           - os: windows-latest
             platform: x64-mingw-ucrt
+          - os: windows-11-arm
+            platform: aarch64-mingw-ucrt
+            ruby: 3.4
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -333,5 +336,5 @@ jobs:
         with:
           name: cruby-x86_64-linux-musl-gem
           path: gems
-      - run: apk add build-base
+      - run: apk add build-base git
       - run: ./bin/test-gem-install ./gems

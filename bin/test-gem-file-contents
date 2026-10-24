@@ -65,7 +65,13 @@ Minitest::Reporters.use!([Minitest::Reporters::SpecReporter.new])
 
 puts "Testing '#{gemfile}' (#{gemspec.platform})"
 describe File.basename(gemfile) do
-  let(:supported_ruby_versions) { ["3.2", "3.3", "3.4", "4.0"] }
+  let(:supported_ruby_versions) do
+    if gemspec.platform.to_s == "aarch64-mingw-ucrt"
+      ["3.4", "4.0"]
+    else
+      ["3.2", "3.3", "3.4", "4.0"]
+    end
+  end
 
   describe "setup" do
     it "gemfile contains some files" do
@@ -103,6 +109,7 @@ describe File.basename(gemfile) do
   if gemspec.platform == Gem::Platform::RUBY
     describe "ruby platform" do
       it "depends on mini_portile2" do
+        skip "not in gemspec while using fork"
         assert(gemspec.dependencies.find { |d| d.name == "mini_portile2" })
       end
 
